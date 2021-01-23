@@ -62,7 +62,6 @@ uint8_t getShas(DynamicJsonDocument doc, String *shas)
 
 uint16_t generateColor(String sha)
 {
-  sha.toLowerCase();
   uint16_t color = 0;
   uint8_t length = sha.length();
 
