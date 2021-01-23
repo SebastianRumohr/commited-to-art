@@ -186,6 +186,7 @@ void showResult(DynamicJsonDocument doc)
   generateColors(shas, colors, count);
 
   uint8_t newCount = countNewShas(previousShas, shas, count);
+  Serial.printf("%d of new commits\n", newCount);
 
   for (uint8_t blink = 0; blink < 5; blink++)
   {
