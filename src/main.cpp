@@ -156,6 +156,8 @@ void loop()
     uint16_t colors[BOOSTER_LED_COUNT];
     uint8_t count = getShas(doc, shas);
     generateColors(shas, colors, count);
+    booster_setrgb(0, 0, 0);
+    booster_setall();
     for (uint8_t i = 0; i < count; i++)
     {
       booster_sethsv(colors[i], BOOSTER_MAX_SATURATION, BOOSTER_MAX_VALUE);
