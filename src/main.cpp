@@ -141,29 +141,52 @@ DynamicJsonDocument request()
   return doc;
 }
 
+void showError(uint16_t hue = 0)
+{
+  booster_setrgb(0, 0, 0);
+  booster_setall();
+
+  booster_sethsv(hue % 360, BOOSTER_MAX_SATURATION, BOOSTER_MAX_VALUE);
+  booster_setled(BOOSTER_LED_COUNT - 1);
+  booster_show();
+}
+
+void showResult(DynamicJsonDocument doc)
+{
+  String shas[BOOSTER_LED_COUNT];
+  uint16_t colors[BOOSTER_LED_COUNT];
+  uint8_t count = getShas(doc, shas);
+  generateColors(shas, colors, count);
+
+  booster_setrgb(0, 0, 0);
+  booster_setall();
+  for (uint8_t i = 0; i < count; i++)
+  {
+    booster_sethsv(colors[i], BOOSTER_MAX_SATURATION, BOOSTER_MAX_VALUE);
+    booster_setled(BOOSTER_LED_COUNT - i - 1);
+  }
+
+  booster_show();
+}
+
 void loop()
 {
   if ((WiFi.status() == WL_CONNECTED))
   {
     DynamicJsonDocument doc = request();
+
     if (doc.isNull())
     {
-      return;
+      showError();
     }
-
-    String shas[BOOSTER_LED_COUNT];
-    uint16_t colors[BOOSTER_LED_COUNT];
-    uint8_t count = getShas(doc, shas);
-    generateColors(shas, colors, count);
-    booster_setrgb(0, 0, 0);
-    booster_setall();
-    for (uint8_t i = 0; i < count; i++)
+    else
     {
-      booster_sethsv(colors[i], BOOSTER_MAX_SATURATION, BOOSTER_MAX_VALUE);
-      booster_setled(BOOSTER_LED_COUNT - i - 1);
+      showResult(doc);
     }
-
-    booster_show();
+  }
+  else
+  {
+    showError(240);
   }
 
   delay(10000);
