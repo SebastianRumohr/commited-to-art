@@ -20,7 +20,7 @@
 #define NODEMCU_SPI_CLK 14
 #define NODEMCU_SPI_SS 15
 
-static const String requestUrl = "https://api.github.com/repos/" + String(GitHub.repository) + "/commits?per_page=16&sha=" + String(GitHub.branch);
+static const String requestUrl = "https://api.github.com/repos/" + String(GitHub.repository) + "/commits?per_page=" + String((int)BOOSTER_LED_COUNT, 10) + "&sha=" + String(GitHub.branch);
 static const String requestAuthHeaderValue = "token " + String(GitHub.oAuthToken);
 
 void startSequence()
@@ -112,6 +112,7 @@ DynamicJsonDocument request()
 {
   DynamicJsonDocument doc(2048);
   HTTPClient http;
+  Serial.println(requestUrl);
   http.begin(requestUrl);
   http.addHeader("Authorization", requestAuthHeaderValue);
 
