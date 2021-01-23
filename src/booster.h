@@ -1,5 +1,6 @@
 #ifndef BOOSTER_H
 #define BOOSTER_H
+
 #include <stdint.h>
 #include <Arduino.h>
 #include <SPI.h>
