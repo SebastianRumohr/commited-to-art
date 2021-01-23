@@ -149,7 +149,7 @@ void showError(uint16_t hue = 0)
 
   uint8_t errorLed = BOOSTER_LED_COUNT - 1;
 
-  for (uint8_t i = 0; i < 3; i++)
+  for (uint8_t i = 0; i < 5; i++)
   {
     booster_setrgb(0, 0, 0);
     booster_setled(errorLed);
