@@ -143,12 +143,23 @@ DynamicJsonDocument request()
 
 void showError(uint16_t hue = 0)
 {
+
   booster_setrgb(0, 0, 0);
   booster_setall();
 
-  booster_sethsv(hue % 360, BOOSTER_MAX_SATURATION, BOOSTER_MAX_VALUE);
-  booster_setled(BOOSTER_LED_COUNT - 1);
-  booster_show();
+  uint8_t errorLed = BOOSTER_LED_COUNT - 1;
+
+  for (uint8_t i = 0; i < 3; i++)
+  {
+    booster_setrgb(0, 0, 0);
+    booster_setled(errorLed);
+    booster_show();
+    delay(500);
+    booster_sethsv(hue % 360, BOOSTER_MAX_SATURATION, BOOSTER_MAX_VALUE);
+    booster_setled(errorLed);
+    booster_show();
+    delay(500);
+  }
 }
 
 void showResult(DynamicJsonDocument doc)
