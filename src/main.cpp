@@ -190,17 +190,21 @@ void showResult(DynamicJsonDocument doc)
 
   for (uint8_t blink = 0; blink < 5; blink++)
   {
-    // off
-    for (uint8_t i = 0; i < count; i++)
+    if (blink > 0)
     {
-      if (i < newCount)
+      // off
+      for (uint8_t i = 0; i < count; i++)
       {
-        booster_sethsv(0, 0, 0);
-        booster_setled(BOOSTER_LED_COUNT - i - 1);
+        if (i < newCount)
+        {
+          booster_sethsv(0, 0, 0);
+          booster_setled(BOOSTER_LED_COUNT - i - 1);
+        }
       }
+      booster_show();
+
+      delay(500);
     }
-    booster_show();
-    delay(500);
 
     // on
     for (uint8_t i = 0; i < count; i++)
