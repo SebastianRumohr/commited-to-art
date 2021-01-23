@@ -1,5 +1,7 @@
 # commited-to-art
 
+Create art by committing to your repository.
+
 ## src/secrets.h
 ``` c
 #ifndef _SECRETS_H
