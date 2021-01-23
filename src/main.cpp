@@ -12,7 +12,7 @@
 #define BOOSTER_CS_PIN 27
 #define BOOSTER_LED_COUNT 16
 
-#define BOOSTER_MAX_VALUE 6
+#define BOOSTER_MAX_VALUE 10
 #define BOOSTER_MAX_SATURATION 255
 
 #define NODEMCU_SPI_MISO 12
@@ -162,6 +162,22 @@ void showError(uint16_t hue = 0)
   }
 }
 
+static String previousShas[BOOSTER_LED_COUNT];
+
+uint8_t countNewShas(String *previous, String *current, uint8_t length)
+{
+  uint8_t index = 0;
+  for (index = 0; index < length; index++)
+  {
+    if (current[index].equalsIgnoreCase(previous[0]))
+    {
+      break;
+    }
+  }
+
+  return index;
+}
+
 void showResult(DynamicJsonDocument doc)
 {
   String shas[BOOSTER_LED_COUNT];
@@ -169,15 +185,37 @@ void showResult(DynamicJsonDocument doc)
   uint8_t count = getShas(doc, shas);
   generateColors(shas, colors, count);
 
-  booster_setrgb(0, 0, 0);
-  booster_setall();
-  for (uint8_t i = 0; i < count; i++)
+  uint8_t newCount = countNewShas(previousShas, shas, count);
+
+  for (uint8_t blink = 0; blink < 5; blink++)
   {
-    booster_sethsv(colors[i], BOOSTER_MAX_SATURATION, BOOSTER_MAX_VALUE);
-    booster_setled(BOOSTER_LED_COUNT - i - 1);
+    // off
+    for (uint8_t i = 0; i < count; i++)
+    {
+      if (i < newCount)
+      {
+        booster_sethsv(0, 0, 0);
+        booster_setled(BOOSTER_LED_COUNT - i - 1);
+      }
+    }
+    booster_show();
+    delay(500);
+
+    // on
+    for (uint8_t i = 0; i < count; i++)
+    {
+      booster_sethsv(colors[i], BOOSTER_MAX_SATURATION, BOOSTER_MAX_VALUE);
+      booster_setled(BOOSTER_LED_COUNT - i - 1);
+    }
+
+    booster_show();
+    delay(500);
   }
 
-  booster_show();
+  for (uint8_t i = 0; i < BOOSTER_LED_COUNT; i++)
+  {
+    previousShas[i] = shas[i];
+  }
 }
 
 void loop()
