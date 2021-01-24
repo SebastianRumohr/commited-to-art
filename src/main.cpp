@@ -141,8 +141,7 @@ DynamicJsonDocument request()
   {
     DynamicJsonDocument filter(200);
     filter[0]["sha"] = true;
-    String payload = http.getString();
-    deserializeJson(doc, payload, DeserializationOption::Filter(filter));
+    deserializeJson(doc, http.getStream(), DeserializationOption::Filter(filter));
     serializeJsonPretty(doc, Serial);
     Serial.println("\n---");
   }
