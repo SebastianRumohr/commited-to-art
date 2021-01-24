@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <base64.h>
+#include <math.h>
 #include <ArduinoJson.h>
 #include "booster.h"
 
@@ -60,18 +61,37 @@ uint8_t getShas(DynamicJsonDocument doc, String *shas)
   return count;
 }
 
+uint8_t hexCharToNibble(char c)
+{
+  uint8_t byte = c;
+  // transform hex character to the 4bit equivalent number, using the ascii table indexes
+  if (byte >= '0' && byte <= '9')
+  {
+    byte = byte - '0';
+  }
+  else if (byte >= 'a' && byte <= 'f')
+  {
+    byte = byte - 'a' + 10;
+  }
+  else if (byte >= 'A' && byte <= 'F')
+  {
+    byte = byte - 'A' + 10;
+  }
+
+  return byte;
+}
+
 uint16_t generateColor(String sha)
 {
   uint16_t color = 0;
   uint8_t length = sha.length();
-
+  uint8_t value = 0;
   for (uint8_t i = 0; i < length; i += 2)
   {
-    uint8_t value = (sha[i] % 32 + 9) % 25 * 16 + (sha[i + 1] % 32 + 9) % 25;
-    color += value;
-    color %= 360;
+    value ^= hexCharToNibble(sha[i]) << 4 | hexCharToNibble(sha[i + 1]);
   }
 
+  color = round(value * (360.0 / 256.0));
   return color;
 }
 
